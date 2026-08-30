@@ -14,13 +14,20 @@ export function startREPL(state: State) {
 
         const commandName = words[0];
         const command = commands[commandName];
-        if (command) {
-            command.callback(state);
-        } else {
+        if (!command) {
             console.log("Unknown command");
+            rl.prompt();
+            return;
+        }
+
+        try {
+            await command.callback(state);
+        } catch (e) {
+            console.log((e as Error).message);
         }
         rl.prompt();
     });
+
 }
 
 export function cleanInput(input: string): string[] {
