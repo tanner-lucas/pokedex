@@ -1,20 +1,37 @@
+import { Cache } from "./pokecache.js";
+
 export class PokeAPI {
 
   private static readonly baseURL = "https://pokeapi.co/api/v2";
+  private cache: Cache;
 
-  constructor() { }
+  constructor(cacheInterval: number) {
+    this.cache = new Cache(cacheInterval);
+  };
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
-    // either a specific URL depending on the place we left off, or the first page with no id
-    // response.next = "https://pokeapi.co/api/v2/location-area/?offset=20&limit=20"
-    // the above ^ is how we page through the locations, in addition to response.previous
+
     const url = pageURL || `${PokeAPI.baseURL}/location-area/`;
+
+    const cached = this.cache.get<ShallowLocations>(url);
+    if (cached) {
+      return cached;
+    };
+
     const res = await fetch(url);
+
     if (!res.ok) {
       throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
     }
-    return (await res.json()) as ShallowLocations;
+
+    const locations = (await res.json()) as ShallowLocations;
+    this.cache.add(url, locations);
+    return locations;
   }
+  
+  closeCache() {
+    this.cache.stopReapLoop();
+  };
 
   /*async fetchLocation(locationName: string): Promise<Location> {
     
