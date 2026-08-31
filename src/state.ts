@@ -31,7 +31,7 @@ export function initState(): State {
     return {
         rl,
         commands,
-        pokeapi: new PokeAPI(),
+        pokeapi: new PokeAPI((1000 * 60 * 5)),
         nextLocationsURL: null,
         prevLocationsURL: null
     };
