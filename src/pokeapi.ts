@@ -1,25 +1,31 @@
-/*
-Add a map command. It displays the names of 20 location areas in the Pokemon world. 
-Each subsequent call to map should display the next 20 locations, and so on. 
-This will be how we explore the Pokemon world. 
-*/
-
 export class PokeAPI {
+
   private static readonly baseURL = "https://pokeapi.co/api/v2";
 
-  constructor() {}
+  constructor() { }
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
-    // implement this
+    // either a specific URL depending on the place we left off, or the first page with no id
+    // response.next = "https://pokeapi.co/api/v2/location-area/?offset=20&limit=20"
+    // the above ^ is how we page through the locations, in addition to response.previous
+    const url = pageURL || `${PokeAPI.baseURL}/location-area/`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
+    }
+    return (await res.json()) as ShallowLocations;
   }
 
-  async fetchLocation(locationName: string): Promise<Location> {
-    // implement this
-  }
+  /*async fetchLocation(locationName: string): Promise<Location> {
+    
+  }*/
 }
 
 export type ShallowLocations = {
-  // add properties here
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: { name: string; url: string }[];
 };
 
 export type Location = {
