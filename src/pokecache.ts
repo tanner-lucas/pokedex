@@ -29,7 +29,7 @@ export class Cache {
     #reap() {
         const cutoff = Date.now() - this.#interval;
         for (const [key, entry] of this.#cache) {
-            if (entry.createdAt < cutoff) {
+            if (entry.createdAt <= cutoff) {
                 this.#cache.delete(key);
             }
         }
