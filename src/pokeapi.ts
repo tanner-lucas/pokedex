@@ -15,6 +15,7 @@ export class PokeAPI {
 
     const cached = this.cache.get<ShallowLocations>(url);
     if (cached) {
+      console.log("***cache hit***");
       return cached;
     };
 
