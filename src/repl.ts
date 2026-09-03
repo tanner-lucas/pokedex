@@ -21,7 +21,7 @@ export function startREPL(state: State) {
         }
 
         try {
-            await command.callback(state);
+            await command.callback(state, ...words.slice(1));
         } catch (e) {
             console.log((e as Error).message);
         }

@@ -35,9 +35,26 @@ export class PokeAPI {
     this.cache.stopReapLoop();
   };
 
-  /*async fetchLocation(locationName: string): Promise<Location> {
-    
-  }*/
+  async fetchLocation(locationName: string): Promise<Location> {
+
+    const url = `${PokeAPI.baseURL}/location-area/${locationName}`;
+
+    const cached = this.cache.get<Location>(url);
+    if (cached) {
+      console.log("***cache hit***");
+      return cached;
+    };
+
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
+    }
+
+    const location = (await res.json()) as Location;
+    this.cache.add(url, location);
+    return location;
+  }
 }
 
 export type ShallowLocations = {
@@ -48,5 +65,9 @@ export type ShallowLocations = {
 };
 
 export type Location = {
-  // add properties here
+  id: number;
+  name: string;
+  pokemon_encounters: {
+    pokemon: { name: string; url: string };
+  }[];
 };

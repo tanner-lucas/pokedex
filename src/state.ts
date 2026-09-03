@@ -4,11 +4,12 @@ import { createInterface, type Interface } from "readline";
 import { PokeAPI } from "./pokeapi.js";
 import { commandMap } from "./command_map.js";
 import { commandMapB } from "./command_mapb.js";
+import { commandExplore } from "./command_explore.js";
 
 export type CLICommand = {
     name: string;
     description: string;
-    callback: (state: State) => Promise<void>;
+    callback: (state: State, ...args: string[]) => Promise<void>;
 };
 
 export type State = {
@@ -58,6 +59,11 @@ export function getCommands(): Record<string, CLICommand> {
             name: "mapb",
             description: "Displays the previous 20 location areas",
             callback: commandMapB
+        },
+        explore: {
+            name: "explore",
+            description: "Displays the Pokemon found in a location area",
+            callback: commandExplore,
         },
     };
 }
